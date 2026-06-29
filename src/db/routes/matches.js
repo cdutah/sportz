@@ -25,7 +25,12 @@ matchRouter.get('/', async (req, res) => {
             .orderBy((desc(matches.createdAt)))
             .limit(limit)
 
-        res.json({ data });
+          res.json({
+           data: data.map((match) => ({
+               ...match,
+               status: getMatchStatus(match.startTime, match.endTime) ?? match.status,
+           })),
+        });
     } catch (e) {
         res.status(500).json({ error: 'Failed to list matches.' });
     }
@@ -56,7 +61,7 @@ matchRouter.post('/', async (req, res) => {
 
         res.status(201).json({ data: event });
     } catch (e) {
-        res.status(500).json({ error: 'Failed to create match.', details: JSON.stringify(e) });
+        res.status(500).json({ error: 'Failed to create match.'});
     }
 })
 
